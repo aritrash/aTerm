@@ -1,0 +1,51 @@
+# Build directories
+
+build/
+cmake-build*/
+out/
+
+# CMake
+
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Qt
+
+*.pro.user
+*.qbs.user
+*.autosave
+moc_*
+qrc_*
+ui_*
+
+# Visual Studio Code
+
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+
+# Visual Studio
+
+.vs/
+
+# Windows
+
+Thumbs.db
+Desktop.ini
+
+# macOS
+
+.DS_Store
+
+# Logs
+
+*.log
+
+# Temporary files
+
+*.tmp
+*.bak
