@@ -5,6 +5,7 @@
 
 class QLabel;
 class TerminalView;
+class SerialManager;
 
 class ATermWindow final : public QMainWindow
 {
@@ -33,5 +34,7 @@ private:
     QLabel* encoding_label_;
 
     QPushButton* setup_button_;
+
+    SerialManager* serial_;
 
 };

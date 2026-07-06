@@ -6,10 +6,13 @@
 
 #include "terminalview.hpp"
 #include "version.hpp"
+#include "serialmanager.hpp"
+#include "serialdialog.hpp"
 
 ATermWindow::ATermWindow(QWidget* parent)
     : QMainWindow(parent),
       terminal_(nullptr),
+      serial_(nullptr),
       state_label_(nullptr),
       connection_label_(nullptr),
       encoding_label_(nullptr),
@@ -18,6 +21,7 @@ ATermWindow::ATermWindow(QWidget* parent)
     initialize_window();
 
     terminal_ = new TerminalView;
+    serial_ = new SerialManager(this);
 
     setCentralWidget(terminal_);
 
@@ -96,9 +100,26 @@ void ATermWindow::initialize_status_bar()
 }
 
 void ATermWindow::on_setup_clicked()
-{
-    QMessageBox::information(
-        this,
-        "Setup",
-        "Serial configuration dialog coming soon.");
-}
+    {
+        SerialDialog dialog(this);
+
+        if (dialog.exec() != QDialog::Accepted)
+            return;
+
+        if (!serial_->connect_port(
+                dialog.port_name(),
+                dialog.baud_rate()))
+        {
+            QMessageBox::warning(
+                this,
+                "Connection Failed",
+                "Unable to open the selected serial port.");
+
+            return;
+        }
+
+        connection_label_->setText(
+        QString("%1 @ %2")
+            .arg(dialog.port_name())
+            .arg(dialog.baud_rate()));
+    }
