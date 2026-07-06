@@ -1,5 +1,7 @@
 #include "terminalview.hpp"
 
+#include "theme.hpp"
+
 #include <QFont>
 #include <QPainter>
 #include <QRect>
@@ -20,20 +22,16 @@ void TerminalView::initialize_terminal()
 
     terminal_font.setFamilies(
     {
-        "Consolas",
-        "Cascadia Mono",
-        "Courier New"
+        theme::font::PRIMARY,
+        theme::font::FALLBACK_1,
+        theme::font::FALLBACK_2
     });
 
-    terminal_font.setPointSize(12);
+    terminal_font.setPointSize(theme::font::TERMINAL_SIZE);
+
     terminal_font.setStyleHint(QFont::Monospace);
 
     setFont(terminal_font);
-
-    display_text_ =
-        "aTerm\n\n"
-        "Desktop Console for aTOS\n\n"
-        "Waiting for connection...";
 }
 
 void TerminalView::paintEvent(QPaintEvent* event)
@@ -42,16 +40,48 @@ void TerminalView::paintEvent(QPaintEvent* event)
 
     QPainter painter(this);
 
-    painter.fillRect(rect(), Qt::white);
+    painter.fillRect(rect(), theme::colour::BACKGROUND);
 
     painter.setRenderHint(QPainter::TextAntialiasing, true);
 
-    painter.setPen(Qt::black);
+    painter.setPen(theme::colour::FOREGROUND);
 
     painter.setFont(font());
 
+    switch (buffer_.mode())
+    {
+        case TerminalMode::Splash:
+
+            draw_splash(painter);
+
+            break;
+
+        case TerminalMode::Console:
+
+            draw_console(painter);
+
+            break;
+
+        default:
+
+            draw_console(painter);
+
+            break;
+    }
+}
+
+void TerminalView::draw_console(QPainter& painter)
+{
     painter.drawText(
         rect(),
         Qt::AlignCenter,
-        display_text_);
+        buffer_.console_text());
+}
+
+void TerminalView::draw_splash(QPainter& painter)
+{
+    painter.drawText(
+        rect(),
+        Qt::AlignCenter,
+        "");
 }

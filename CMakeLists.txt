@@ -22,6 +22,17 @@ qt_add_executable(aTerm WIN32
     src/main.cpp
     src/atermwindow.cpp
     src/terminalview.cpp
+    src/terminalbuffer.cpp
+    src/serialmanager.cpp
+    src/serialdialog.cpp
+
+    include/atermwindow.hpp
+    include/terminalview.hpp
+    include/terminalbuffer.hpp
+    include/serialmanager.hpp
+    include/serialdialog.hpp
+
+    resources.qrc
 )
 
 target_include_directories(aTerm

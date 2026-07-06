@@ -22,6 +22,6 @@ inline constexpr char COPYRIGHT[] =
     "Copyright (C) 2026 Aether Research";
 
 inline constexpr char VERSION_STRING[] =
-    "0.1.0";
+    "0.1.1";
 
 }

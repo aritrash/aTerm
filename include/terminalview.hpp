@@ -3,6 +3,10 @@
 #include <QPaintEvent>
 #include <QWidget>
 
+#include "terminalbuffer.hpp"
+
+class QPainter;
+
 class TerminalView final : public QWidget
 {
 public:
@@ -19,8 +23,10 @@ private:
 
     void initialize_terminal();
 
-private:
+    void draw_console(QPainter& painter);
 
-    QString display_text_;
+    void draw_splash(QPainter& painter);
+
+    TerminalBuffer buffer_;
 
 };

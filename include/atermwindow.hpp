@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QPushButton>
 
 class QLabel;
 class TerminalView;
@@ -19,6 +20,8 @@ private:
 
     void initialize_status_bar();
 
+    void on_setup_clicked();
+
 private:
 
     TerminalView* terminal_;
@@ -28,5 +31,7 @@ private:
     QLabel* connection_label_;
 
     QLabel* encoding_label_;
+
+    QPushButton* setup_button_;
 
 };

@@ -1,0 +1,68 @@
+#include "serialmanager.hpp"
+
+SerialManager::SerialManager(QObject* parent)
+    : QObject(parent)
+{
+    connect(
+        &serial_,
+        &QSerialPort::readyRead,
+        this,
+        &SerialManager::read_serial);
+}
+
+bool SerialManager::connect_port(
+    const QString& port_name,
+    qint32 baud_rate)
+{
+    if (serial_.isOpen())
+        serial_.close();
+
+    serial_.setPortName(port_name);
+
+    serial_.setBaudRate(baud_rate);
+
+    if (!serial_.open(QIODevice::ReadWrite))
+        return false;
+
+    emit connected_changed(true);
+
+    return true;
+}
+
+void SerialManager::disconnect_port()
+{
+    if (!serial_.isOpen())
+        return;
+
+    serial_.close();
+
+    emit connected_changed(false);
+}
+
+bool SerialManager::connected() const
+{
+    return serial_.isOpen();
+}
+
+void SerialManager::send(
+    const QByteArray& data)
+{
+    if (!serial_.isOpen())
+        return;
+
+    serial_.write(data);
+}
+
+void SerialManager::read_serial()
+{
+    emit data_received(
+        serial_.readAll());
+}
+
+void SerialManager::send_line(const QString& text)
+{
+    if (!serial_.isOpen())
+        return;
+
+    serial_.write(text.toUtf8() + '\n');
+}
