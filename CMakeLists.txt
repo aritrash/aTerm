@@ -18,9 +18,10 @@ find_package(Qt6 REQUIRED COMPONENTS
 
 qt_standard_project_setup()
 
-qt_add_executable(aTerm
+qt_add_executable(aTerm WIN32
     src/main.cpp
     src/atermwindow.cpp
+    src/terminalview.cpp
 )
 
 target_include_directories(aTerm
