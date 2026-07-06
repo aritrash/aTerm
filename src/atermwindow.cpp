@@ -1,13 +1,16 @@
 #include "atermwindow.hpp"
 
+#include <QByteArray>
 #include <QLabel>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QStatusBar>
+#include <QDebug>
+#include <QString>
 
+#include "serialdialog.hpp"
+#include "serialmanager.hpp"
 #include "terminalview.hpp"
 #include "version.hpp"
-#include "serialmanager.hpp"
-#include "serialdialog.hpp"
 
 ATermWindow::ATermWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -21,9 +24,19 @@ ATermWindow::ATermWindow(QWidget* parent)
     initialize_window();
 
     terminal_ = new TerminalView;
+    terminal_->set_buffer(&terminal_buffer_);
     serial_ = new SerialManager(this);
 
     setCentralWidget(terminal_);
+
+    connect(
+        serial_,
+        &SerialManager::data_received,
+        this,
+        [this](const QByteArray& data)
+        {
+            process_serial_data(data);
+        });
 
     initialize_status_bar();
 }
@@ -62,15 +75,12 @@ void ATermWindow::initialize_window()
         "padding-right: 10px;"
         "min-height: 22px;"
         "}"
-
         "QPushButton:hover {"
         "background: #E8E8E8;"
         "}"
-
         "QPushButton:pressed {"
         "background: #DCDCDC;"
-        "}"
-    );
+        "}");
 }
 
 void ATermWindow::initialize_status_bar()
@@ -100,26 +110,49 @@ void ATermWindow::initialize_status_bar()
 }
 
 void ATermWindow::on_setup_clicked()
+{
+    SerialDialog dialog(this);
+
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    if (!serial_->connect_port(
+            dialog.port_name(),
+            dialog.baud_rate()))
     {
-        SerialDialog dialog(this);
+        QMessageBox::warning(
+            this,
+            "Connection Failed",
+            "Unable to open the selected serial port.");
 
-        if (dialog.exec() != QDialog::Accepted)
-            return;
+        return;
+    }
 
-        if (!serial_->connect_port(
-                dialog.port_name(),
-                dialog.baud_rate()))
-        {
-            QMessageBox::warning(
-                this,
-                "Connection Failed",
-                "Unable to open the selected serial port.");
-
-            return;
-        }
-
-        connection_label_->setText(
+    connection_label_->setText(
         QString("%1 @ %2")
             .arg(dialog.port_name())
             .arg(dialog.baud_rate()));
+
+    state_label_->setText("Connected");
+}
+
+void ATermWindow::process_serial_data(const QByteArray& data)
+{
+    const QString line = QString::fromUtf8(data).trimmed();
+
+    if (line.isEmpty())
+        return;
+
+    if (line == "HELLO")
+    {
+        terminal_buffer_.set_console_text(
+            "HELLO\n\n"
+            "ESP32 connected successfully.");
+
+        terminal_->update();
+
+        return;
     }
+
+    qDebug().noquote() << "[UART]" << line;
+}

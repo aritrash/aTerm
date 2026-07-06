@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 #include <QPushButton>
+#include <QByteArray>
+#include "terminalbuffer.hpp"
 
 class QLabel;
 class TerminalView;
@@ -23,9 +25,13 @@ private:
 
     void on_setup_clicked();
 
+     void process_serial_data(const QByteArray& data);
+
 private:
 
     TerminalView* terminal_;
+
+    TerminalBuffer terminal_buffer_;
 
     QLabel* state_label_;
 

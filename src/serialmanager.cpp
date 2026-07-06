@@ -1,5 +1,9 @@
 #include "serialmanager.hpp"
 
+#include <QDebug>
+#include <QMessageBox>
+#include <QByteArray>
+
 SerialManager::SerialManager(QObject* parent)
     : QObject(parent)
 {
@@ -55,8 +59,8 @@ void SerialManager::send(
 
 void SerialManager::read_serial()
 {
-    emit data_received(
-        serial_.readAll());
+    const QByteArray data = serial_.readAll();
+    emit data_received(data);
 }
 
 void SerialManager::send_line(const QString& text)

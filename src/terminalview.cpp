@@ -7,9 +7,16 @@
 #include <QRect>
 
 TerminalView::TerminalView(QWidget* parent)
-    : QWidget(parent)
+    : QWidget(parent),
+      buffer_(nullptr)
 {
     initialize_terminal();
+}
+
+void TerminalView::set_buffer(
+    const TerminalBuffer* buffer)
+{
+    buffer_ = buffer;
 }
 
 void TerminalView::initialize_terminal()
@@ -36,6 +43,9 @@ void TerminalView::initialize_terminal()
 
 void TerminalView::paintEvent(QPaintEvent* event)
 {
+    if (!buffer_)
+        return;
+
     QWidget::paintEvent(event);
 
     QPainter painter(this);
@@ -48,7 +58,7 @@ void TerminalView::paintEvent(QPaintEvent* event)
 
     painter.setFont(font());
 
-    switch (buffer_.mode())
+    switch (buffer_->mode())
     {
         case TerminalMode::Splash:
 
@@ -75,7 +85,7 @@ void TerminalView::draw_console(QPainter& painter)
     painter.drawText(
         rect(),
         Qt::AlignCenter,
-        buffer_.console_text());
+        buffer_->console_text());
 }
 
 void TerminalView::draw_splash(QPainter& painter)

@@ -22,6 +22,10 @@ public:
     [[nodiscard]]
     const QString& console_text() const;
 
+    void set_console_text(const QString& text);
+
+    void append_line(const QString& line);
+
 private:
 
     TerminalMode mode_;

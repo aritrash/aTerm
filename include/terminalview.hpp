@@ -15,6 +15,8 @@ public:
 
     ~TerminalView() override = default;
 
+    void set_buffer(const TerminalBuffer* buffer);
+
 protected:
 
     void paintEvent(QPaintEvent* event) override;
@@ -27,6 +29,8 @@ private:
 
     void draw_splash(QPainter& painter);
 
-    TerminalBuffer buffer_;
+private:
+
+    const TerminalBuffer* buffer_;
 
 };

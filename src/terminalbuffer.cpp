@@ -23,3 +23,18 @@ const QString& TerminalBuffer::console_text() const
 {
     return console_text_;
 }
+
+void TerminalBuffer::set_console_text(
+    const QString& text)
+{
+    console_text_ = text;
+}
+
+void TerminalBuffer::append_line(
+    const QString& line)
+{
+    if (!console_text_.isEmpty())
+        console_text_ += '\n';
+
+    console_text_ += line;
+}
