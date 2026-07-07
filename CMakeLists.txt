@@ -25,12 +25,18 @@ qt_add_executable(aTerm WIN32
     src/terminalbuffer.cpp
     src/serialmanager.cpp
     src/serialdialog.cpp
+    src/protocolparser.cpp
+    src/machineinfo.cpp
 
     include/atermwindow.hpp
     include/terminalview.hpp
     include/terminalbuffer.hpp
     include/serialmanager.hpp
     include/serialdialog.hpp
+    include/protocolparser.hpp
+    include/protocol.hpp
+    include/machinetype.hpp
+    include/machineinfo.hpp
 
     resources.qrc
 )

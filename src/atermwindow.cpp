@@ -1,12 +1,15 @@
 #include "atermwindow.hpp"
 
 #include <QByteArray>
+#include <QDebug>
 #include <QLabel>
 #include <QMessageBox>
 #include <QStatusBar>
-#include <QDebug>
 #include <QString>
+#include <QVector>
 
+#include "machineinfo.hpp"
+#include "protocolparser.hpp"
 #include "serialdialog.hpp"
 #include "serialmanager.hpp"
 #include "terminalview.hpp"
@@ -16,6 +19,7 @@ ATermWindow::ATermWindow(QWidget* parent)
     : QMainWindow(parent),
       terminal_(nullptr),
       serial_(nullptr),
+      machine_type_(MachineType::Unknown),
       state_label_(nullptr),
       connection_label_(nullptr),
       encoding_label_(nullptr),
@@ -26,7 +30,6 @@ ATermWindow::ATermWindow(QWidget* parent)
     terminal_ = new TerminalView;
     terminal_->set_buffer(&terminal_buffer_);
     serial_ = new SerialManager(this);
-
     setCentralWidget(terminal_);
 
     connect(
@@ -44,13 +47,9 @@ ATermWindow::ATermWindow(QWidget* parent)
 void ATermWindow::initialize_window()
 {
     setWindowTitle(version::NAME);
-
     resize(1280, 720);
-
     setMinimumSize(960, 540);
-
     setUnifiedTitleAndToolBarOnMac(false);
-
     statusBar()->setStyleSheet(
         "QStatusBar {"
         "background: #f4f4f4;"
@@ -86,11 +85,8 @@ void ATermWindow::initialize_window()
 void ATermWindow::initialize_status_bar()
 {
     state_label_ = new QLabel("Ready");
-
     connection_label_ = new QLabel("Disconnected");
-
     encoding_label_ = new QLabel("UTF-8");
-
     setup_button_ = new QPushButton("Setup");
     setup_button_->setFixedWidth(72);
 
@@ -101,11 +97,8 @@ void ATermWindow::initialize_status_bar()
         &ATermWindow::on_setup_clicked);
 
     statusBar()->addWidget(state_label_, 1);
-
     statusBar()->addPermanentWidget(connection_label_);
-
     statusBar()->addPermanentWidget(encoding_label_);
-
     statusBar()->addPermanentWidget(setup_button_);
 }
 
@@ -138,21 +131,44 @@ void ATermWindow::on_setup_clicked()
 
 void ATermWindow::process_serial_data(const QByteArray& data)
 {
-    const QString line = QString::fromUtf8(data).trimmed();
+    const QVector<ProtocolParser::ParseResult> results =
+        parser_.parse(data);
 
-    if (line.isEmpty())
-        return;
-
-    if (line == "HELLO")
+    for (const auto& result : results)
     {
-        terminal_buffer_.set_console_text(
-            "HELLO\n\n"
-            "ESP32 connected successfully.");
+        switch (result.type)
+        {
+            case ProtocolParser::Result::Hello:
+            {
+                machine_type_ = result.machine;
+                state_label_->setText("Handshake");
+                terminal_buffer_.set_console_text(
+                    QString("Connected to %1")
+                        .arg(machine_name(machine_type_)));
 
-        terminal_->update();
+                terminal_->update();
 
-        return;
+                qDebug().noquote()
+                    << "[HELLO]"
+                    << machine_name(machine_type_);
+
+                break;
+            }
+
+            case ProtocolParser::Result::AsciiCommand:
+            {
+                if (result.text.isEmpty())
+                    break;
+
+                qDebug().noquote()
+                    << "[ASCII]"
+                    << result.text;
+
+                break;
+            }
+
+            default:
+                break;
+        }
     }
-
-    qDebug().noquote() << "[UART]" << line;
 }
