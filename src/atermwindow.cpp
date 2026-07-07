@@ -141,11 +141,9 @@ void ATermWindow::process_serial_data(const QByteArray& data)
             case ProtocolParser::Result::Hello:
             {
                 machine_type_ = result.machine;
+                terminal_buffer_.set_machine(machine_type_);
                 state_label_->setText("Handshake");
-                terminal_buffer_.set_console_text(
-                    QString("Connected to %1")
-                        .arg(machine_name(machine_type_)));
-
+                
                 terminal_->update();
 
                 qDebug().noquote()
@@ -157,13 +155,7 @@ void ATermWindow::process_serial_data(const QByteArray& data)
 
             case ProtocolParser::Result::AsciiCommand:
             {
-                if (result.text.isEmpty())
-                    break;
-
-                qDebug().noquote()
-                    << "[ASCII]"
-                    << result.text;
-
+                execute_command(result.text);
                 break;
             }
 
@@ -171,4 +163,61 @@ void ATermWindow::process_serial_data(const QByteArray& data)
                 break;
         }
     }
+}
+
+void ATermWindow::execute_command(
+    const QString& command)
+{
+    if (command == "SHOW_SPLASH")
+    {
+        terminal_buffer_.set_mode(
+            TerminalMode::Splash);
+
+        terminal_buffer_.clear();
+        terminal_->update();
+
+        return;
+    }
+
+    if (command == "CONSOLE")
+    {
+        terminal_buffer_.set_mode(
+            TerminalMode::Console);
+
+        terminal_->update();
+
+        return;
+    }
+
+    if (command == "CLEAR")
+    {
+        terminal_buffer_.clear();
+
+        terminal_->update();
+
+        return;
+    }
+
+    if (command == "PRINT")
+    {
+        terminal_buffer_.append_line("");
+
+        terminal_->update();
+
+        return;
+    }
+
+    if (command.startsWith("PRINT "))
+    {
+        terminal_buffer_.append_line(
+            command.mid(6));
+
+        terminal_->update();
+
+        return;
+    }
+
+    qDebug().noquote()
+        << "[UNKNOWN]"
+        << command;
 }

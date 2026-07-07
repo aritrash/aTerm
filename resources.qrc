@@ -1,7 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>assets/splash.png</file>
-        <file>assets/logo.png</file>
-        <file>assets/icon.ico</file>
+        <file>assets/splash/unknown.png</file>
+        <file>assets/splash/esp32.png</file>
+        <file>assets/splash/esp8266.png</file>
+        <file>assets/splash/stm32f103.png</file>
+        <file>assets/splash/stm32f407.png</file>
+        <file>assets/splash/teensy31.png</file>
+        <file>assets/splash/teensy40.png</file>
+        <file>assets/splash/rpi3.png</file>
+        <file>assets/splash/rpi4.png</file>
+        <file>assets/splash/rpi5.png</file>
+        <file>assets/splash/rpi_cm4.png</file>
+        <file>assets/splash/rpi_cm5.png</file>
     </qresource>
 </RCC>

@@ -1,10 +1,13 @@
 #include "terminalview.hpp"
-
+#include "splashresources.hpp"
 #include "theme.hpp"
 
 #include <QFont>
 #include <QPainter>
 #include <QRect>
+#include <QPixmap>
+#include <QMessageBox>
+#include <QFile>
 
 TerminalView::TerminalView(QWidget* parent)
     : QWidget(parent),
@@ -24,7 +27,7 @@ void TerminalView::initialize_terminal()
     setAutoFillBackground(false);
 
     setFocusPolicy(Qt::StrongFocus);
-
+    setFocus();
     QFont terminal_font;
 
     terminal_font.setFamilies(
@@ -47,51 +50,78 @@ void TerminalView::paintEvent(QPaintEvent* event)
         return;
 
     QWidget::paintEvent(event);
-
     QPainter painter(this);
-
     painter.fillRect(rect(), theme::colour::BACKGROUND);
-
     painter.setRenderHint(QPainter::TextAntialiasing, true);
-
     painter.setPen(theme::colour::FOREGROUND);
-
     painter.setFont(font());
 
     switch (buffer_->mode())
     {
         case TerminalMode::Splash:
-
             draw_splash(painter);
-
             break;
 
         case TerminalMode::Console:
-
             draw_console(painter);
-
             break;
 
         default:
-
             draw_console(painter);
-
             break;
     }
 }
 
 void TerminalView::draw_console(QPainter& painter)
 {
+    constexpr int MARGIN = 12;
+
+    const QRect console_rect =
+        rect().adjusted(
+            MARGIN,
+            MARGIN,
+            -MARGIN,
+            -MARGIN);
+
     painter.drawText(
-        rect(),
-        Qt::AlignCenter,
+        console_rect,
+        Qt::AlignLeft |
+        Qt::AlignTop,
         buffer_->console_text());
 }
 
 void TerminalView::draw_splash(QPainter& painter)
 {
-    painter.drawText(
-        rect(),
-        Qt::AlignCenter,
-        "");
+    const QString path =
+        splash_resource(buffer_->machine());
+
+    const QPixmap splash(path);
+
+    if (splash.isNull())
+    {
+        painter.drawText(
+            rect(),
+            Qt::AlignCenter,
+            QString("Missing splash\n%1").arg(path));
+
+        return;
+    }
+
+    constexpr double SCALE = 0.75;
+
+    const QSize target_size(
+        static_cast<int>(width() * SCALE),
+        static_cast<int>(height() * SCALE));
+
+    const QPixmap scaled =
+        splash.scaled(
+            target_size,
+            Qt::KeepAspectRatio,
+            Qt::SmoothTransformation);
+
+    const QPoint position(
+        (width() - scaled.width()) / 2,
+        (height() - scaled.height()) / 2);
+
+    painter.drawPixmap(position, scaled);
 }

@@ -10,6 +10,9 @@ project(
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS
     Widgets
@@ -27,6 +30,7 @@ qt_add_executable(aTerm WIN32
     src/serialdialog.cpp
     src/protocolparser.cpp
     src/machineinfo.cpp
+    src/splashresources.cpp
 
     include/atermwindow.hpp
     include/terminalview.hpp
@@ -37,6 +41,7 @@ qt_add_executable(aTerm WIN32
     include/protocol.hpp
     include/machinetype.hpp
     include/machineinfo.hpp
+    include/splashresources.hpp
 
     resources.qrc
 )

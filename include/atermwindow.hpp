@@ -24,6 +24,7 @@ private:
     void initialize_status_bar();
     void on_setup_clicked();
     void process_serial_data(const QByteArray& data);
+    void execute_command(const QString& command);
 
 private:
 
