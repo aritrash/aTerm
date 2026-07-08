@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QSerialPort>
+#include <QByteArray>
 
 class SerialManager final : public QObject
 {
@@ -37,5 +38,5 @@ private slots:
 private:
 
     QSerialPort serial_;
-
+    QByteArray rx_buffer_;
 };

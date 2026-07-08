@@ -59,8 +59,32 @@ void SerialManager::send(
 
 void SerialManager::read_serial()
 {
-    const QByteArray data = serial_.readAll();
-    emit data_received(data);
+    rx_buffer_.append(
+        serial_.readAll());
+
+    while (true)
+    {
+        const qsizetype newline =
+            rx_buffer_.indexOf('\n');
+
+        if (newline < 0)
+            break;
+
+        QByteArray line =
+            rx_buffer_.left(newline);
+
+        rx_buffer_.remove(
+            0,
+            newline + 1);
+
+        if (!line.isEmpty() &&
+            line.back() == '\r')
+        {
+            line.chop(1);
+        }
+
+        emit data_received(line);
+    }
 }
 
 void SerialManager::send_line(const QString& text)

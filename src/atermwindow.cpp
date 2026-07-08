@@ -33,6 +33,15 @@ ATermWindow::ATermWindow(QWidget* parent)
     setCentralWidget(terminal_);
 
     connect(
+        terminal_,
+        &TerminalView::line_entered,
+        this,
+        [this](const QString& line)
+        {
+            process_input_line(line);
+        });
+
+    connect(
         serial_,
         &SerialManager::data_received,
         this,
@@ -42,6 +51,17 @@ ATermWindow::ATermWindow(QWidget* parent)
         });
 
     initialize_status_bar();
+}
+
+void ATermWindow::process_input_line(
+    const QString& line)
+{
+    terminal_buffer_.append_line(
+        QString("C:\\>%1").arg(line));
+
+    terminal_->update();
+
+    serial_->send_line(line);
 }
 
 void ATermWindow::initialize_window()
@@ -108,6 +128,8 @@ void ATermWindow::on_setup_clicked()
 
     if (dialog.exec() != QDialog::Accepted)
         return;
+
+    terminal_->setFocus();
 
     if (!serial_->connect_port(
             dialog.port_name(),

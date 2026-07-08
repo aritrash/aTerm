@@ -2,6 +2,7 @@
 
 #include <QPaintEvent>
 #include <QWidget>
+#include <QString>
 
 #include "terminalbuffer.hpp"
 
@@ -9,6 +10,7 @@ class QPainter;
 
 class TerminalView final : public QWidget
 {
+    Q_OBJECT
 public:
 
     explicit TerminalView(QWidget* parent = nullptr);
@@ -20,6 +22,8 @@ public:
 protected:
 
     void paintEvent(QPaintEvent* event) override;
+
+    void keyPressEvent(QKeyEvent* event) override;
 
 private:
 
@@ -33,4 +37,9 @@ private:
 
     const TerminalBuffer* buffer_;
 
+    QString input_line_;
+
+signals:
+
+    void line_entered(const QString& line);
 };

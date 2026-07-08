@@ -25,6 +25,7 @@ private:
     void on_setup_clicked();
     void process_serial_data(const QByteArray& data);
     void execute_command(const QString& command);
+    void process_input_line(const QString& line);
 
 private:
 

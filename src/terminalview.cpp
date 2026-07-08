@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QMessageBox>
 #include <QFile>
+#include <QKeyEvent>
 
 TerminalView::TerminalView(QWidget* parent)
     : QWidget(parent),
@@ -83,11 +84,19 @@ void TerminalView::draw_console(QPainter& painter)
             -MARGIN,
             -MARGIN);
 
+    QString display =
+        buffer_->console_text();
+
+    if (!display.isEmpty())
+        display += '\n';
+
+    display += input_line_;
+
     painter.drawText(
         console_rect,
         Qt::AlignLeft |
         Qt::AlignTop,
-        buffer_->console_text());
+        display);
 }
 
 void TerminalView::draw_splash(QPainter& painter)
@@ -124,4 +133,52 @@ void TerminalView::draw_splash(QPainter& painter)
         (height() - scaled.height()) / 2);
 
     painter.drawPixmap(position, scaled);
+}
+
+void TerminalView::keyPressEvent(
+    QKeyEvent* event)
+{
+    if (buffer_->mode() != TerminalMode::Console)
+        return;
+
+    switch (event->key())
+    {
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+        {
+            emit line_entered(input_line_);
+
+            input_line_.clear();
+
+            update();
+
+            break;
+        }
+
+        case Qt::Key_Backspace:
+        {
+            if (!input_line_.isEmpty())
+                input_line_.chop(1);
+
+            update();
+
+            break;
+        }
+
+        default:
+        {
+            const QString text =
+                event->text();
+
+            if (!text.isEmpty() &&
+                text[0].isPrint())
+            {
+                input_line_ += text;
+
+                update();
+            }
+
+            break;
+        }
+    }
 }
