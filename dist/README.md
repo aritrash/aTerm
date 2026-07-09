@@ -4,6 +4,14 @@
 
 It provides a dedicated communication interface between a host computer and an aTOS system running on supported hardware such as the ESP32. Unlike traditional serial terminals, aTerm is designed specifically around the requirements of aTOS and the TPA-1 research ecosystem.
 
+## Downloads
+
+The latest Windows installer is available from the GitHub Releases page.
+
+```
+https://github.com/aritrash/aTerm/releases/latest
+```
+
 ---
 
 ## Project Status
