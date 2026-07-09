@@ -17,7 +17,7 @@ public:
 
     ~TerminalView() override = default;
 
-    void set_buffer(const TerminalBuffer* buffer);
+    void set_buffer(TerminalBuffer* buffer);
 
 protected:
 
@@ -35,9 +35,7 @@ private:
 
 private:
 
-    const TerminalBuffer* buffer_;
-
-    QString input_line_;
+    TerminalBuffer* buffer_;
 
 signals:
 

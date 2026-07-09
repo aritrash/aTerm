@@ -13,6 +13,32 @@ TerminalBuffer::TerminalBuffer()
         "",
         "Waiting for connection..."
     };
+
+    prompt_.clear();
+}
+
+void TerminalBuffer::set_prompt(
+    const QString& prompt)
+{
+    prompt_ = prompt;
+}
+
+const QString&
+TerminalBuffer::prompt() const
+{
+    return prompt_;
+}
+
+void TerminalBuffer::set_input_line(
+    const QString& line)
+{
+    input_line_ = line;
+}
+
+const QString&
+TerminalBuffer::input_line() const
+{
+    return input_line_;
 }
 
 void TerminalBuffer::set_machine(
@@ -36,9 +62,18 @@ TerminalMode TerminalBuffer::mode() const
     return mode_;
 }
 
-QString TerminalBuffer::console_text() const
+QString TerminalBuffer::display_text() const
 {
-    return console_lines_.join('\n');
+    QString text =
+        console_lines_.join('\n');
+
+    if (!text.isEmpty())
+        text += '\n';
+
+    text += prompt_;
+    text += input_line_;
+
+    return text;
 }
 
 void TerminalBuffer::set_console_text(

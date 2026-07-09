@@ -8,7 +8,7 @@ It provides a dedicated communication interface between a host computer and an a
 
 ## Project Status
 
-Current Version: **0.1.0**
+Current Version: **0.2.0**
 
 Development Status: **Early Development**
 
@@ -16,18 +16,15 @@ Development Status: **Early Development**
 
 ## Features
 
-Current goals include:
-
 - UART serial communication
 - Cross-platform desktop application
 - Custom aTOS console protocol
 - 16-colour terminal rendering
 - Keyboard input forwarding
 - Session logging
-
-Future goals include:
-
 - Splash screen rendering
+
+Future: 
 - Register viewer
 - Memory inspector
 - Tryte inspector
@@ -56,6 +53,7 @@ aTerm/
 ├── include/
 ├── src/
 ├── tests/
+├── dist/
 
 ├── CMakeLists.txt
 ├── LICENSE

@@ -206,6 +206,7 @@ void ATermWindow::execute_command(
         terminal_buffer_.set_mode(
             TerminalMode::Console);
 
+        terminal_buffer_.set_prompt("C:\\> ");
         terminal_->update();
 
         return;

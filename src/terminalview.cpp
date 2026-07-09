@@ -18,7 +18,7 @@ TerminalView::TerminalView(QWidget* parent)
 }
 
 void TerminalView::set_buffer(
-    const TerminalBuffer* buffer)
+    TerminalBuffer* buffer)
 {
     buffer_ = buffer;
 }
@@ -84,19 +84,10 @@ void TerminalView::draw_console(QPainter& painter)
             -MARGIN,
             -MARGIN);
 
-    QString display =
-        buffer_->console_text();
-
-    if (!display.isEmpty())
-        display += '\n';
-
-    display += input_line_;
-
     painter.drawText(
         console_rect,
-        Qt::AlignLeft |
-        Qt::AlignTop,
-        display);
+        Qt::AlignLeft | Qt::AlignTop,
+        buffer_->display_text());
 }
 
 void TerminalView::draw_splash(QPainter& painter)
@@ -146,23 +137,24 @@ void TerminalView::keyPressEvent(
         case Qt::Key_Return:
         case Qt::Key_Enter:
         {
-            emit line_entered(input_line_);
+            emit line_entered(
+                buffer_->input_line());
 
-            input_line_.clear();
+            buffer_->set_input_line("");
 
             update();
-
-            break;
         }
 
         case Qt::Key_Backspace:
         {
-            if (!input_line_.isEmpty())
-                input_line_.chop(1);
+            QString line =
+                buffer_->input_line();
+
+            line.chop(1);
+
+            buffer_->set_input_line(line);
 
             update();
-
-            break;
         }
 
         default:
@@ -173,7 +165,14 @@ void TerminalView::keyPressEvent(
             if (!text.isEmpty() &&
                 text[0].isPrint())
             {
-                input_line_ += text;
+                QString line =
+                    buffer_->input_line();
+
+                line += text;
+
+                buffer_->set_input_line(line);
+
+                update();
 
                 update();
             }
@@ -182,3 +181,4 @@ void TerminalView::keyPressEvent(
         }
     }
 }
+

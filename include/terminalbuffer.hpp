@@ -32,11 +32,23 @@ public:
     void set_console_text(const QString& text);
     void append_line(const QString& line);
     void clear();
+    void set_prompt(const QString& prompt);
+
+    [[nodiscard]]
+    const QString& prompt() const;
+
+    void set_input_line(const QString& line);
+
+    [[nodiscard]]
+    const QString& input_line() const;
+
+    QString display_text() const;
 
 private:
 
     TerminalMode mode_;
     QStringList console_lines_;
     MachineType machine_;
-
+    QString prompt_;
+    QString input_line_;
 };
