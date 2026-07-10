@@ -16,7 +16,7 @@ https://github.com/aritrash/aTerm/releases/latest
 
 ## Project Status
 
-Current Version: **0.2.0**
+Current Version: **0.2.1**
 
 Development Status: **Early Development**
 
@@ -31,6 +31,7 @@ Development Status: **Early Development**
 - Keyboard input forwarding
 - Session logging
 - Splash screen rendering
+- Scroll support
 
 Future: 
 - Register viewer
