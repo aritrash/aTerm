@@ -59,7 +59,7 @@ void ATermWindow::process_input_line(
     terminal_buffer_.append_line(
         QString("C:\\>%1").arg(line));
 
-    terminal_->update();
+    terminal_->refresh();
 
     serial_->send_line(line);
 }
@@ -196,7 +196,7 @@ void ATermWindow::execute_command(
             TerminalMode::Splash);
 
         terminal_buffer_.clear();
-        terminal_->update();
+        terminal_->refresh();
 
         return;
     }
@@ -207,7 +207,7 @@ void ATermWindow::execute_command(
             TerminalMode::Console);
 
         terminal_buffer_.set_prompt("C:\\> ");
-        terminal_->update();
+        terminal_->refresh();
 
         return;
     }
@@ -216,7 +216,7 @@ void ATermWindow::execute_command(
     {
         terminal_buffer_.clear();
 
-        terminal_->update();
+        terminal_->refresh();
 
         return;
     }
@@ -225,7 +225,7 @@ void ATermWindow::execute_command(
     {
         terminal_buffer_.append_line("");
 
-        terminal_->update();
+        terminal_->refresh();
 
         return;
     }
@@ -235,7 +235,7 @@ void ATermWindow::execute_command(
         terminal_buffer_.append_line(
             command.mid(6));
 
-        terminal_->update();
+        terminal_->refresh();
 
         return;
     }

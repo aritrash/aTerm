@@ -17,6 +17,12 @@ TerminalBuffer::TerminalBuffer()
     prompt_.clear();
 }
 
+const QStringList&
+TerminalBuffer::lines() const
+{
+    return console_lines_;
+}
+
 void TerminalBuffer::set_prompt(
     const QString& prompt)
 {

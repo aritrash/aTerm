@@ -42,6 +42,9 @@ public:
     [[nodiscard]]
     const QString& input_line() const;
 
+    [[nodiscard]]
+    const QStringList& lines() const;
+
     QString display_text() const;
 
 private:
